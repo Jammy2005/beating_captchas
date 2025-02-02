@@ -24,19 +24,19 @@ from io import BytesIO
 from zipfile import ZipFile
 
 
-def download_and_unzip(url, extract_to="Datasets"):
-    http_response = urlopen(url)
-    zipfile = ZipFile(BytesIO(http_response.read()))
-    zipfile.extractall(path=extract_to)
+# def download_and_unzip(url, extract_to="Datasets"):
+#     http_response = urlopen(url)
+#     zipfile = ZipFile(BytesIO(http_response.read()))
+#     zipfile.extractall(path=extract_to)
 
 
-if not os.path.exists(os.path.join("Datasets", "captcha_images_v2")):
-    download_and_unzip("https://github.com/AakashKumarNain/CaptchaCracker/raw/master/captcha_images_v2.zip",
-                       extract_to="Datasets")
+# if not os.path.exists(os.path.join("Datasets", "captcha_images_v2")):
+#     download_and_unzip("https://github.com/AakashKumarNain/CaptchaCracker/raw/master/captcha_images_v2.zip",
+#                        extract_to="Datasets")
 
 # Create a list of all the images and labels in the dataset
 dataset, vocab, max_len = [], set(), 0
-captcha_path = os.path.join("Datasets", "captcha_images_v2") # changed from v2 to v1
+captcha_path = os.path.join("Datasets", "captcha-images-v3") 
 for file in os.listdir(captcha_path):
     file_path = os.path.join(captcha_path, file)
     label = os.path.splitext(file)[0] # Get the file name without the extension
@@ -95,13 +95,13 @@ reduceLROnPlat = ReduceLROnPlateau(monitor="val_CER", factor=0.9, min_delta=1e-1
 model2onnx = Model2onnx(f"{configs.model_path}/model.keras")
 
 # Train the model
-# model.fit(
-#     train_data_provider,
-#     validation_data=val_data_provider,
-#     epochs=configs.train_epochs,
-#     callbacks=[earlystopper, checkpoint, trainLogger, reduceLROnPlat, tb_callback, model2onnx],
-#     #workers=configs.train_workers
-# )
+model.fit(
+    train_data_provider,
+    validation_data=val_data_provider,
+    epochs=configs.train_epochs,
+    callbacks=[earlystopper, checkpoint, trainLogger, reduceLROnPlat, tb_callback, model2onnx],
+    #workers=configs.train_workers
+)
 
 # Save training and validation datasets as csv files
 train_data_provider.to_csv(os.path.join(configs.model_path, "train.csv"))

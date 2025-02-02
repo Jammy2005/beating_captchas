@@ -1,0 +1,31 @@
+import pytesseract
+from PIL import Image
+import os
+
+def rename_file_with_image_text(image_path):
+    try:
+        # Open the image file
+        image = Image.open(image_path)
+        
+        # Use pytesseract to do OCR on the image
+        text = pytesseract.image_to_string(image).strip()
+        
+        # Get the directory and original file extension
+        directory, original_file = os.path.split(image_path)
+        original_extension = os.path.splitext(original_file)[1]
+        
+        # Create the new file name
+        new_file_name = f"{text}{original_extension}"
+        new_file_path = os.path.join(directory, new_file_name)
+        
+        # Rename the file
+        os.rename(image_path, new_file_path)
+        
+        print(f"File renamed to: {new_file_name}")
+        
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+# Example usage
+image_path = "D:\Projects\BA\Captcha\CaptchaCollection_updated\Captcha_bpagent02_2025_01_12_07_26_34.png"  # Update with the correct path to your image file
+rename_file_with_image_text(image_path)
